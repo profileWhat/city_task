@@ -2,7 +2,7 @@
 
 /** @var yii\web\View $this */
 /** @var yii\bootstrap5\ActiveForm $form */
-/** @var \frontend\models\SignupForm $model */
+/** @var \common\models\SignupForm $model */
 
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
@@ -19,11 +19,20 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+                <?= $form->field($model, 'email')->textInput() ?>
 
-                <?= $form->field($model, 'email') ?>
+                <?= $form->field($model, 'fio')->textInput() ?>
+
+                <?= $form->field($model, 'phone')->textInput() ?>
 
                 <?= $form->field($model, 'password')->passwordInput() ?>
+
+                <?= $form->field($model, 'confirm_password')->passwordInput() ?>
+
+            <?= $form->field($model, 'verify_code')->widget(\yii\captcha\Captcha::classname(), [
+                    'template' => '<div class="row"><div class="col-lg-3">{image}</div><div class="col-lg-6">{input}</div></div>'
+            ])
+             ?>
 
                 <div class="form-group">
                     <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>

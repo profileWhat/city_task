@@ -3,6 +3,9 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
+use yii\db\BaseActiveRecord;
 
 /**
  * This is the model class for table "{{%review}}".
@@ -32,14 +35,35 @@ class Review extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    BaseActiveRecord::EVENT_BEFORE_INSERT => ['create_time'],
+                ],
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => ['author_id', 'city_id'],
+                'updatedByAttribute' => ['author_id', 'city_id'],
+            ],
+        ];
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
-            [['title', 'text', 'rating'], 'required'],
+            [['title', 'text', 'rating', 'author_id'], 'required'],
             [['text', 'img'], 'string'],
-            [['rating', 'create_time', 'city_id', 'author_id'], 'integer'],
+            [['rating', 'city_id', 'author_id'], 'integer'],
+            [['rating', 'min' => 1, 'max' => 5]],
             [['title'], 'string', 'max' => 128],
-            [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['author_id' => 'id']],
             [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::class, 'targetAttribute' => ['city_id' => 'id']],
         ];
     }

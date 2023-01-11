@@ -26,7 +26,7 @@ class m230111_083244_create_review_table extends Migration
             'img' => $this->binary(),
             'create_time' => $this->integer(),
             'city_id' => $this->integer(),
-            'author_id' => $this->integer()
+            'author_id' => $this->integer()->notNull()
         ], $tableOptions);
 
         $this->addForeignKey(

@@ -11,10 +11,12 @@ use common\models\User;
  */
 class SignupForm extends Model
 {
-    public $username;
+    public $fio;
     public $email;
+    public $phone;
     public $password;
-
+    public $confirm_password;
+    public $verify_code;
 
     /**
      * {@inheritdoc}
@@ -22,19 +24,44 @@ class SignupForm extends Model
     public function rules()
     {
         return [
-            ['username', 'trim'],
-            ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
-            ['username', 'string', 'min' => 2, 'max' => 255],
+
+            ['fio', 'trim'],
+            ['fio', 'required'],
+            ['fio', 'string', 'max' => 128],
 
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
-            ['email', 'string', 'max' => 255],
+            ['email', 'string', 'max' => 128],
             ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+
+            ['phone', 'trim'],
+            ['phone', 'required'],
+            ['phone', 'match', 'pattern' => '/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/', 'message' => 'This entered phone number is incorrect'],
 
             ['password', 'required'],
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
+
+            ['confirm_password', 'required'],
+            ['confirm_password', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match"],
+
+            ['verify_code', 'required'],
+            ['verify_code', 'captcha'],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'fio' => 'Full Name',
+            'email' => 'Email',
+            'phone' => 'Phone',
+            'password' => 'Password',
+            'confirm_password' => 'Confirm Password',
+            'verifyCode' => 'Verification code',
         ];
     }
 
@@ -50,13 +77,14 @@ class SignupForm extends Model
         }
         
         $user = new User();
-        $user->username = $this->username;
         $user->email = $this->email;
+        $user->fio = $this->fio;
+        $user->phone = $this->phone;
         $user->setPassword($this->password);
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
 
-        return $user->save() && $this->sendEmail($user);
+        return $user->save();
     }
 
     /**
