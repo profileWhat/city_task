@@ -22,7 +22,7 @@ use yii\web\IdentityInterface;
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
-    public $verification_token;
+    private $verification_token;
     public $auth_key;
     /**
      * {@inheritdoc}
@@ -184,6 +184,23 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function generateEmailVerificationToken()
     {
-        $this->verification_token = Yii::$app->security->generateRandomString() . '_' . time();
+        $this->verification_token = Yii::$app->security->generateRandomString();
     }
+
+    /**
+     * return email verification token
+     * @return mixed
+     */
+    public function getVerificationToken()
+    {
+        return $this->verification_token;
+    }
+
+    /**
+     * validate input verification token
+     */
+    public function validateVerificationToken($verification_token) {
+        return $this->verification_token == $verification_token;
+    }
+
 }

@@ -70,13 +70,12 @@ class SignupForm extends Model
      *
      * @return bool whether the creating new account was successful and email was sent
      */
-    public function signup()
+    public function signup($user)
     {
         if (!$this->validate()) {
             return null;
         }
-        
-        $user = new User();
+
         $user->email = $this->email;
         $user->fio = $this->fio;
         $user->phone = $this->phone;
@@ -84,7 +83,7 @@ class SignupForm extends Model
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
 
-        return $user->save();
+        return $this->sendEmail($user);
     }
 
     /**

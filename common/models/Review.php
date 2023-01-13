@@ -60,10 +60,11 @@ class Review extends \yii\db\ActiveRecord
     {
         return [
             [['title', 'text', 'rating', 'author_id'], 'required'],
-            [['text', 'img'], 'string'],
+            ['img', 'string'],
+            ['text', 'string', 'max' => 255],
             [['rating', 'city_id', 'author_id'], 'integer'],
             [['rating', 'min' => 1, 'max' => 5]],
-            [['title'], 'string', 'max' => 128],
+            [['title'], 'string', 'max' => 100],
             [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::class, 'targetAttribute' => ['city_id' => 'id']],
         ];
     }

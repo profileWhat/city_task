@@ -3,20 +3,45 @@
 namespace frontend\models;
 
 use common\models\User;
+use Yii;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
 
+/**
+ * Verify Email Form
+ */
 class VerifyEmailForm extends Model
 {
-    /**
-     * @var string
-     */
-    public $token;
+    public $input_token;
 
     /**
      * @var User
      */
     private $_user;
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+
+            ['input_token', 'trim'],
+            ['input_token', 'required'],
+            ['input_token', 'string', 'max' => 128],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'token' => 'Verification Token',
+        ];
+    }
 
 
     /**
@@ -26,14 +51,12 @@ class VerifyEmailForm extends Model
      * @param array $config name-value pairs that will be used to initialize the object properties
      * @throws InvalidArgumentException if token is empty or not valid
      */
-    public function __construct($token, array $config = [])
+    public function __construct(User $user,  array $config = [])
     {
+        $this->_user = $user;
+        $token = $user->getVerificationToken();
         if (empty($token) || !is_string($token)) {
             throw new InvalidArgumentException('Verify email token cannot be blank.');
-        }
-        $this->_user = User::findByVerificationToken($token);
-        if (!$this->_user) {
-            throw new InvalidArgumentException('Wrong verify email token.');
         }
         parent::__construct($config);
     }
@@ -41,12 +64,13 @@ class VerifyEmailForm extends Model
     /**
      * Verify email
      *
-     * @return User|null the saved model or null if saving fails
+     * @return bool the saved model or null if saving fails
      */
     public function verifyEmail()
     {
-        $user = $this->_user;
-        $user->status = User::STATUS_ACTIVE;
-        return $user->save(false) ? $user : null;
+        if ($this->_user->validateVerificationToken($this->input_token)) {
+            return $this->_user->save(false);
+        }
+        return false;
     }
 }
