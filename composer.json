@@ -12,12 +12,13 @@
         "irc": "irc://irc.freenode.net/yii",
         "source": "https://github.com/yiisoft/yii2"
     },
-    "minimum-stability": "stable",
     "require": {
         "php": ">=7.4.0",
-        "yiisoft/yii2": "~2.0.45",
+        "yiisoft/yii2": "^2.0",
         "yiisoft/yii2-bootstrap5": "~2.0.2",
-        "yiisoft/yii2-symfonymailer": "~2.0.3"
+        "yiisoft/yii2-symfonymailer": "~2.0.3",
+        "rodzadra/geolocation": "*",
+        "div/yii2-geoip": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
@@ -39,6 +40,8 @@
             "frontend\\tests\\": ["frontend/tests/", "frontend/tests/_support"]
         }
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "config": {
         "allow-plugins": {
             "yiisoft/yii2-composer" : true
