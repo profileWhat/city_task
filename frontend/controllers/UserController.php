@@ -72,6 +72,19 @@ class UserController extends Controller
     }
 
     /**
+     * Displays user's reviews.
+     * @param int $id ID
+     * @return string
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionReviews($id)
+    {
+        return $this->render('reviews', [
+            'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID

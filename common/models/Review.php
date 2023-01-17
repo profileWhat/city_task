@@ -6,6 +6,8 @@ use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\BaseActiveRecord;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "{{%review}}".
@@ -16,11 +18,10 @@ use yii\db\BaseActiveRecord;
  * @property int $rating
  * @property resource|null $img
  * @property int|null $create_time
- * @property int|null $city_id
  * @property int|null $author_id
  *
  * @property User $author
- * @property City $city
+ * @property City[] $cities
  */
 class Review extends \yii\db\ActiveRecord
 {
@@ -100,9 +101,39 @@ class Review extends \yii\db\ActiveRecord
      * Gets query for [[City]].
      *
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
-    public function getCity()
+    public function getCities()
     {
-        return $this->hasOne(City::class, ['id' => 'city_id']);
+        return $this->hasMany(City::class, ['id' => 'city_id'])
+            ->viaTable('{{%city_review}}', ['review_id' => 'id']);
+    }
+
+    /**
+     * Gets link to author
+     *
+     * @return string
+     */
+    public function getAuthorLink()
+    {
+        return Html::a($this->author->fio, $this->author->getUrl());
+    }
+
+    /**
+     * Gets link to city
+     *
+     * @return array
+     */
+    public function getCitiesLink()
+    {
+        $links = [];
+        if (count($this->cities) > 0) {
+            foreach($this->cities as $city) {
+                $links[] = Html::a($city->name, $city->getUrl());
+            }
+            return $links;
+        }
+        $links[] = Html::a('All cities', City::getCitiesUrl());
+        return $links;
     }
 }

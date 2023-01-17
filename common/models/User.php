@@ -6,6 +6,7 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\BaseActiveRecord;
+use yii\helpers\Url;
 use yii\web\IdentityInterface;
 
 /**
@@ -87,6 +88,18 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return $this->hasMany(Review::class, ['author_id' => 'id']);
     }
 
+    /**
+     * Gets user view URL
+     *
+     * @return string
+     */
+    public function getUrl() {
+        return Url::to(['user/view', 'id' => $this->id]);
+    }
+
+    public function getReviewsUrl() {
+        return Url::to(['user/reviews', 'id' => $this->id]);
+    }
 
     /**
      * Validates password

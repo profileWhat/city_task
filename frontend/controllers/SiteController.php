@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\User;
+use frontend\models\UserCityForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
@@ -70,9 +71,14 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($isUserCity = null)
     {
-        return Yii::$app->response->redirect(['city/index']);
+        $userCityForm = new UserCityForm();
+
+
+        return $this->render('index', [
+            'userCityModel' => $userCityForm
+        ]);
     }
 
     /**

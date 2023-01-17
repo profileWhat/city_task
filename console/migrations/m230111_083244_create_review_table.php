@@ -25,18 +25,9 @@ class m230111_083244_create_review_table extends Migration
             'rating' => $this->tinyInteger(5)->notNull(),
             'img' => $this->binary(),
             'create_time' => $this->integer(),
-            'city_id' => $this->integer(),
             'author_id' => $this->integer()->notNull()
         ], $tableOptions);
 
-        $this->addForeignKey(
-            'FK_review_city',
-            '{{%review}}',
-            'city_id',
-            '{{%city}}',
-            'id',
-            'CASCADE'
-        );
 
         $this->addForeignKey(
             'FK_review_author',

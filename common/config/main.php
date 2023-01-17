@@ -32,6 +32,9 @@ return [
                 'plugin_url' => 'https://htmlweb.ru/json/geo/search/?tbl=city&search={{cityName}}&api_key={{api_key}}',
                 'api_key' =>'009a83a9abf337b1dfcfbd8435df0bad'
             ]
+        ],
+        'cityAdapter' => [
+            'class' => common\components\CityAdapter::class
         ]
     ],
 ];

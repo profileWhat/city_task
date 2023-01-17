@@ -34,6 +34,6 @@ class GeoCitySearch extends Component
 
         $url = self::createUrl($cityName);
 
-        return file_get_contents($url);
+        return json_decode(file_get_contents($url));
     }
 }

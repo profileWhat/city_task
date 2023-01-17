@@ -18,28 +18,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Create City', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?= $this->render('_search', ['model' => $searchModel]) ?>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'name',
-            'create_time:datetime',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, City $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
-        ],
-    ]); ?>
-
-
+    <?php foreach ($dataProvider->getModels() as $city): ?>
+        <h4 class="container border-secondary border rounded my-4 p-3 ">
+            <?= Html::a($city->name, $city->getUrl()) ?>
+        </h4>
+    <?php endforeach; ?>
 </div>
