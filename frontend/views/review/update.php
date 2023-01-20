@@ -3,11 +3,11 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var common\models\Review $model */
+/** @var frontend\models\ReviewForm $model */
 
 $this->title = 'Update Review: ' . $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Reviews', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->title];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="review-update">

@@ -47,8 +47,8 @@ class Review extends \yii\db\ActiveRecord
             ],
             [
                 'class' => BlameableBehavior::className(),
-                'createdByAttribute' => ['author_id', 'city_id'],
-                'updatedByAttribute' => ['author_id', 'city_id'],
+                'createdByAttribute' => 'author_id',
+                'updatedByAttribute' => 'author_id',
             ],
         ];
     }
@@ -60,13 +60,12 @@ class Review extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'text', 'rating', 'author_id'], 'required'],
-            ['img', 'string'],
+            [['title', 'text', 'rating'], 'required'],
+            [['img'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['text', 'string', 'max' => 255],
-            [['rating', 'city_id', 'author_id'], 'integer'],
+            [['rating', 'author_id'], 'integer'],
             [['rating'], 'integer', 'min' => 1, 'max' => 5],
             [['title'], 'string', 'max' => 100],
-            [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::class, 'targetAttribute' => ['city_id' => 'id']],
         ];
     }
 
@@ -82,7 +81,6 @@ class Review extends \yii\db\ActiveRecord
             'rating' => 'Rating',
             'img' => 'Img',
             'create_time' => 'Create Time',
-            'city_id' => 'City ID',
             'author_id' => 'Author ID',
         ];
     }

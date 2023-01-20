@@ -3,11 +3,12 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var common\models\Review $model */
+/** @var frontend\models\ReviewForm $model */
 
 $this->title = 'Create Review';
 $this->params['breadcrumbs'][] = ['label' => 'Reviews', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="review-create">
 

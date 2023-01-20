@@ -3,6 +3,8 @@
 namespace frontend\controllers;
 
 use common\models\Review;
+use frontend\models\ReviewForm;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -40,16 +42,14 @@ class ReviewController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Review::find(),
-            /*
             'pagination' => [
-                'pageSize' => 50
+                'pageSize' => 5
             ],
             'sort' => [
                 'defaultOrder' => [
                     'id' => SORT_DESC,
                 ]
             ],
-            */
         ]);
 
         return $this->render('index', [
@@ -77,14 +77,23 @@ class ReviewController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Review();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+        $model = new ReviewForm();
+        if ($this->request->isAjax) {
+            if ($this->request->isPost && $model->load($this->request->post()) && $model->saveReview()) {
+                return $this->renderAjax('@frontend/views/review/view.php', [
+                    'model' => $model->getReview(),
+                ]);
             }
-        } else {
-            $model->loadDefaultValues();
+            return $this->renderAjax('@frontend/views/review/create.php', [
+                'model' => $model,
+            ]);
+        }
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->saveReview()) {
+                return $this->renderAjax('@frontend/views/review/view.php', [
+                    'model' => $model->getReview(),
+                ]);
+            }
         }
 
         return $this->render('create', [
@@ -101,10 +110,21 @@ class ReviewController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = new ReviewForm();
+        $model->loadDefaultValues($this->findModel($id));
+        if ($this->request->isAjax) {
+            if ($this->request->isPost && $model->load($this->request->post()) && $model->saveReview()) {
+                return $this->renderAjax('@frontend/views/review/view.php', [
+                    'model' => $model->getReview(),
+                ]);
+            }
+            return $this->renderAjax('@frontend/views/review/update.php', [
+                'model' => $model,
+            ]);
+        }
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->saveReview()) {
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [
