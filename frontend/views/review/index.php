@@ -40,19 +40,26 @@ Select2::widget([
         </div>
         <div id="reviews">
             <?php foreach ($reviews as $review): ?>
-                <div id="review_<?= $review->id ?>">
-                    <?= \common\widgets\Review::widget(['review' => $review]) ?>
+                <div id="review-view_<?= $review->id ?>">
+                    <div id="review_<?= $review->id ?>">
+                        <?= \common\widgets\Review::widget(['review' => $review]) ?>
+                    </div>
+                    <update-button class="btn btn-success" id="update-start_<?= $review->id ?>"
+                                   data-id="<?= $review->id ?>">
+                        Update
+                    </update-button>
+                    <delete-button class="btn btn-danger" id="delete_<?= $review->id ?>"
+                                   data-id="<?= $review->id ?>">
+                        Delete
+                    </delete-button>
+                    <update-form id="update_<?= $review->id ?>">
+                    </update-form>
+                    <update-cancel-button class="btn btn-danger" style="display: none"
+                                          id="update-cancel_<?= $review->id ?>"
+                                          data-id="<?= $review->id ?>">
+                        Cancel updating
+                    </update-cancel-button>
                 </div>
-                <update-button class="btn btn-success" id="update-start_<?= $review->id ?>"
-                               data-id="<?= $review->id ?>">
-                    Update
-                </update-button>
-                <update-form id="update_<?= $review->id ?>">
-                </update-form>
-                <update-cancel-button class="btn btn-danger" style="display: none" id="update-cancel_<?= $review->id ?>"
-                                      data-id="<?= $review->id ?>">
-                    Cancel updating
-                </update-cancel-button>
             <?php endforeach; ?>
         </div>
         <?php echo LinkPager::widget([
@@ -68,6 +75,7 @@ $js = <<<JS
             element.onclick = function () {
                 element.style.display = 'none';
                 $('#update-start_' + review_id).show();
+                $('#delete_' + review_id).show();
                 $('#update_' + review_id).html("");
                 $('#review_' + review_id).show();
             }
@@ -85,6 +93,7 @@ $js = <<<JS
                     type: 'POST',
                     success: function(res){
                         element.style.display = 'none';
+                        $('#delete_' + review_id).hide();
                         $('#review_' + review_id).hide();
                         $('#update-cancel_' + review_id).show();
                         $('#update_' + review_id).html(res);
@@ -101,9 +110,29 @@ $js = <<<JS
         });
     }
     
+    function setDeleteButtons() {
+    $('delete-button').each(function (index, element) {
+            let review_id = element.dataset.id
+            element.onclick = function () {
+                alert("Review will be deleted");
+                $.ajax({
+                    url: '/review/delete?id=' + review_id,
+                    type: 'POST',
+                    success: function(res){
+                        $('#review-view_' + review_id).html("");
+                        if (!res) alert('Cannot delete review!'); 
+                    },
+                    error: function() {
+                        alert('Cannot delete review!');
+                    }
+                });
+            }
+        });
+    }
+    
     setCancelButtons();
     setUpdateButtons();
-    
+    setDeleteButtons();
     function stopUpdate() {
         $('update-cancel-button').each(function (index, element) {
            element.click(); 
@@ -146,6 +175,9 @@ $js = <<<JS
                 "<update-button class='btn btn-success' id='update-start_" + review_id  + "' data-id='" + review_id + "'>" +
                     "Update" +
                 "</update-button>" +
+                "<delete-button class='btn btn-danger' id='delete_" + review_id + "' data-id='" + review_id + "'>" +
+                    "Delete" +
+                "</delete-button>" +
                 "<update-form id='update_" + review_id + "'>" +
                 "</update-form>" +
                 "<update-cancel-button class='btn btn-danger' style='display: none' id='update-cancel_" + review_id + "' data-id='" + review_id +"'>" +
@@ -153,6 +185,7 @@ $js = <<<JS
                 "</update-cancel-button>");
         setCancelButtons();
         setUpdateButtons();
+        setDeleteButtons();
         reviews.insertAdjacentHTML('afterbegin', 
                 "<div id='review_" + review_id + "'>" +
                 reviewHtml + 

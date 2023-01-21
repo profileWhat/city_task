@@ -73,6 +73,7 @@ class ReviewController extends Controller
     /**
      * Creates a new Review model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     * If request is Ajax, action will return created review view
      * @return string|\yii\web\Response
      */
     public function actionCreate()
@@ -103,7 +104,8 @@ class ReviewController extends Controller
 
     /**
      * Updates an existing Review model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected to the 'index' page.
+     * If request is Ajax, action will return updated review view
      * @param int $id ID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
@@ -115,7 +117,7 @@ class ReviewController extends Controller
         if ($this->request->isAjax) {
             if ($this->request->isPost && $model->load($this->request->post()) && $model->saveReview()) {
                 return $this->renderAjax('@frontend/views/review/view.php', [
-                    'model' => $model->getReview(),
+                    'model' => $this->findModel($id),
                 ]);
             }
             return $this->renderAjax('@frontend/views/review/update.php', [
@@ -136,13 +138,13 @@ class ReviewController extends Controller
      * Deletes an existing Review model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
-     * @return \yii\web\Response
+     * @return false|int|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $result = $this->findModel($id)->delete();
+        if ($this->request->isAjax) return $result;
         return $this->redirect(['index']);
     }
 

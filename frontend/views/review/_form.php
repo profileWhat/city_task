@@ -26,7 +26,7 @@ use yii\widgets\ActiveForm;
                 <h5>
                     <?= $form->field($model, 'citiesId')->widget(Select2::classname(), [
                         'data' => ArrayHelper::map(City::find()->all(), 'id','name'),
-                        'options' => ['placeholder' => 'Select a city ...', 'value' => $model->cities],
+                        'options' => ['placeholder' => 'Select a city ...'],
                         'pluginOptions' => [
                             'allowClear' => true,
                             'multiple' => true,

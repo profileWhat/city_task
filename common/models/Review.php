@@ -134,4 +134,21 @@ class Review extends \yii\db\ActiveRecord
         $links[] = Html::a('All cities', City::getCitiesUrl());
         return $links;
     }
+
+    /**
+     * Set cities to CityReview table
+     *
+     * @return bool
+     */
+    public function setCities($cities)
+    {
+        CityReview::deleteAll(['review_id' => $this->id]);
+        foreach ($cities as $city) {
+            $cityReview = new CityReview();
+            $cityReview->city_id = $city->id;
+            $cityReview->review_id = $this->id;
+            if (!$cityReview->save()) return false;
+        }
+        return true;
+    }
 }

@@ -66,17 +66,13 @@ class ReviewForm extends Model
         $this->review->rating = $this->rating;
         $this->review->img = $this->img;
         if (!$this->review->save()) return false;
+        $cities = [];
         if ($this->citiesId != null) {
-
             for ($i = 0; $i < count($this->citiesId); $i++) {
-                $city = City::findOne(['id' => $this->citiesId[$i]]);
-                $cityReview = new CityReview();
-                $cityReview->city_id = $city->id;
-                $cityReview->review_id = $this->review->id;
-                $cityReview->save();
+                $cities[] = City::findOne(['id' => $this->citiesId[$i]]);
             }
         }
-        return true;
+        return $this->review->setCities($cities);
     }
 
     /**
@@ -90,7 +86,7 @@ class ReviewForm extends Model
         $this->title = $review->title;
         $this->text = $review->text;
         $this->rating = $review->rating;
-        $this->cities = ArrayHelper::map($review->cities, 'id', 'id');
+        $this->citiesId = ArrayHelper::map($review->cities, 'id', 'id');
     }
 
     /**
