@@ -3,8 +3,11 @@
 namespace common\models;
 
 use Yii;
+use yii\base\Exception;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
 use yii\helpers\Url;
 use yii\web\IdentityInterface;
@@ -21,14 +24,15 @@ use yii\web\IdentityInterface;
  *
  * @property Review[] $reviews
  */
-class User extends \yii\db\ActiveRecord implements IdentityInterface
+class User extends ActiveRecord implements IdentityInterface
 {
     private $verification_token;
     public $auth_key;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%user}}';
     }
@@ -36,11 +40,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'attributes' => [
                     BaseActiveRecord::EVENT_BEFORE_INSERT => ['create_time'],
                 ],
@@ -51,7 +55,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['fio', 'email', 'phone', 'password'], 'required'],
@@ -66,7 +70,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -81,9 +85,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * Gets query for [[Reviews]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getReviews()
+    public function getReviews(): ActiveQuery
     {
         return $this->hasMany(Review::class, ['author_id' => 'id']);
     }
@@ -93,11 +97,13 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      *
      * @return string
      */
-    public function getUrl() {
+    public function getUrl(): string
+    {
         return Url::to(['user/view', 'id' => $this->id]);
     }
 
-    public function getReviewsUrl() {
+    public function getReviewsUrl(): string
+    {
         return Url::to(['user/reviews', 'id' => $this->id]);
     }
 
@@ -107,7 +113,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @param string $password password to validate
      * @return bool if password provided is valid for current user
      */
-    public function validatePassword($password)
+    public function validatePassword(string $password): bool
     {
         return Yii::$app->security->validatePassword($password, $this->password);
     }
@@ -116,8 +122,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Generates password hash from password and sets it to the model
      *
      * @param string $password
+     * @throws Exception
      */
-    public function setPassword($password)
+    public function setPassword(string $password)
     {
         $this->password = Yii::$app->security->generatePasswordHash($password);
     }
@@ -133,10 +140,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * Finds user by username
      *
-     * @param string $username
+     * @param $email
      * @return static|null
      */
-    public static function findByEmail($email)
+    public static function findByEmail($email): ?User
     {
         return static::findOne(['email' => $email]);
     }
@@ -144,16 +151,17 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * Finds user by username
      *
-     * @param string $username
+     * @param $email
      * @return static|null
      */
-    public static function findByUsername($email)
+    public static function findByUsername($email): ?User
     {
         return static::findOne(['email' => $email]);
     }
 
     /**
      * @inheritDoc
+     * @throws NotSupportedException
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
@@ -179,13 +187,14 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @inheritDoc
      */
-    public function validateAuthKey($authKey)
+    public function validateAuthKey($authKey): ?bool
     {
         return $this->getAuthKey() === $authKey;
     }
 
     /**
      * Generates "remember me" authentication key
+     * @throws Exception
      */
     public function generateAuthKey()
     {
@@ -194,6 +203,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     /**
      * Generates new token for email verification
+     * @throws Exception
      */
     public function generateEmailVerificationToken()
     {
@@ -212,7 +222,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * validate input verification token
      */
-    public function validateVerificationToken($verification_token) {
+    public function validateVerificationToken($verification_token): bool
+    {
         return $this->verification_token == $verification_token;
     }
 

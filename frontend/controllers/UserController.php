@@ -3,11 +3,10 @@
 namespace frontend\controllers;
 
 use common\models\User;
-use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -17,7 +16,7 @@ class UserController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return array_merge(
             parent::behaviors(),
@@ -38,39 +37,49 @@ class UserController extends Controller
 
     /**
      * Displays a single User model.
+     *
      * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return string|Response
      */
-    public function actionView($id)
+    public function actionView(int $id)
     {
-
+        try {
+            $model = $this->findModel($id);
+        } catch (NotFoundHttpException $e) {
+            return $this->redirect('site/index');
+        }
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model
         ]);
     }
 
     /**
      * Displays user's reviews.
      * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return string|Response
      */
-    public function actionReviews($id)
+    public function actionReviews(int $id)
     {
+        try {
+            $model = $this->findModel($id);
+        } catch (NotFoundHttpException $e) {
+            return $this->redirect('site/index');
+        }
+
         return $this->render('reviews', [
-            'model' => $this->findModel($id),
+            'model' => $model
         ]);
     }
 
     /**
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $id ID
      * @return User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): User
     {
         if (($model = User::findOne(['id' => $id])) !== null) {
             return $model;

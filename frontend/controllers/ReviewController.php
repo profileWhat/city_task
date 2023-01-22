@@ -7,10 +7,11 @@ use common\models\Review;
 use frontend\models\ReviewForm;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\db\StaleObjectException;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -42,7 +43,7 @@ class ReviewController extends Controller
                     ],
                 ],
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -56,7 +57,7 @@ class ReviewController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Review::find()->where(['author_id' => Yii::$app->user->id]),
@@ -78,13 +79,17 @@ class ReviewController extends Controller
     /**
      * Displays a single Review model.
      * @param int $id ID
-     * @return string
-     * @throws ReviewNotFoundException if the model cannot be found
+     * @return string|Response
      */
-    public function actionView($id)
+    public function actionView(int $id)
     {
+        try {
+            $model = $this->findModel($id);
+        } catch (ReviewNotFoundException $e) {
+            return $this->redirect('index');
+        }
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model
         ]);
     }
 
@@ -92,7 +97,8 @@ class ReviewController extends Controller
      * Creates a new Review model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * If request is Ajax, action will return created review view
-     * @return string|\yii\web\Response
+     *
+     * @return string|Response
      */
     public function actionCreate()
     {
@@ -128,17 +134,21 @@ class ReviewController extends Controller
      * Updates an existing Review model.
      * If update is successful, the browser will be redirected to the 'index' page.
      * If request is Ajax, action will return updated review view
+     *
      * @param int $id ID
-     * @return string|\yii\web\Response
+     * @return string|Response
      * @throws ReviewNotFoundException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = new ReviewForm();
         $model->loadDefaultValues($this->findModel($id));
+
         if ($this->request->isAjax) {
             if ($this->request->isPost && $model->load($this->request->post())) {
+
                 $model->img = UploadedFile::getInstance($model, 'img');
+
                 if ($model->uploadImg() && $model->saveReview()) {
                     return $this->renderAjax('@frontend/views/review/view.php', [
                         'model' => $this->findModel($id),
@@ -165,13 +175,20 @@ class ReviewController extends Controller
     /**
      * Deletes an existing Review model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     * if request is Ajax, action will be return result of deletion
+     *
      * @param int $id ID
-     * @return false|int|\yii\web\Response
-     * @throws ReviewNotFoundException if the model cannot be found
+     * @return false|int|Response
+     * @throws \Throwable
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id)
     {
-        $result = $this->findModel($id)->delete();
+        try {
+            $result = $this->findModel($id)->delete();
+        } catch (ReviewNotFoundException | StaleObjectException $e) {
+            return $this->redirect(['index']);
+        }
+
         if ($this->request->isAjax) return $result;
         return $this->redirect(['index']);
     }
@@ -179,11 +196,12 @@ class ReviewController extends Controller
     /**
      * Finds the Review model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $id ID
      * @return Review the loaded model
      * @throws ReviewNotFoundException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id): Review
     {
         if (($model = Review::findOne(['id' => $id])) !== null) {
             return $model;

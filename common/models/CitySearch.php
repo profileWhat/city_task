@@ -7,7 +7,10 @@ use yii\data\ActiveDataProvider;
 
 class CitySearch extends City
 {
-    public function rules()
+    /**
+     * {@inheritdoc}
+     */
+    public function rules(): array
     {
         return [
             [['name'], 'string', 'max' => 128],
@@ -15,14 +18,23 @@ class CitySearch extends City
         ];
     }
 
-    public function scenarios()
+    /**
+     * {@inheritdoc}
+     */
+    public function scenarios(): array
     {
         return Model::scenarios();
     }
 
-    public function search($params)
+    /**
+     * Search function to find city by name
+     *
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function search($params): ActiveDataProvider
     {
-        $query = City::find();
+        $query = City::find()->orderBy(['name' => SORT_ASC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

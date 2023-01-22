@@ -23,7 +23,7 @@ class VerifyEmailForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
 
@@ -36,7 +36,7 @@ class VerifyEmailForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'token' => 'Verification Token',
@@ -47,11 +47,10 @@ class VerifyEmailForm extends Model
     /**
      * Creates a form model with given token.
      *
-     * @param string $token
+     * @param User $user
      * @param array $config name-value pairs that will be used to initialize the object properties
-     * @throws InvalidArgumentException if token is empty or not valid
      */
-    public function __construct(User $user,  array $config = [])
+    public function __construct(User $user, array $config = [])
     {
         $this->_user = $user;
         $token = $user->getVerificationToken();
@@ -66,7 +65,7 @@ class VerifyEmailForm extends Model
      *
      * @return bool the saved model or null if saving fails
      */
-    public function verifyEmail()
+    public function verifyEmail(): bool
     {
         if ($this->_user->validateVerificationToken($this->input_token)) {
             return $this->_user->save(false);

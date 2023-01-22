@@ -21,7 +21,7 @@ class SignupForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
 
@@ -43,7 +43,7 @@ class SignupForm extends Model
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
 
             ['confirm_password', 'required'],
-            ['confirm_password', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match"],
+            ['confirm_password', 'compare', 'compareAttribute' => 'password', 'message' => "Passwords don't match"],
 
             ['verify_code', 'required'],
             ['verify_code', 'captcha'],
@@ -53,7 +53,7 @@ class SignupForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'fio' => 'Full Name',
@@ -70,7 +70,7 @@ class SignupForm extends Model
      *
      * @return bool whether the creating new account was successful and email was sent
      */
-    public function signup($user)
+    public function signup($user): ?bool
     {
         if (!$this->validate()) {
             return null;
@@ -88,10 +88,10 @@ class SignupForm extends Model
 
     /**
      * Sends confirmation email to user
-     * @param User $user user model to with email should be send
+     * @param User $user user model to with email should be sent
      * @return bool whether the email was sent
      */
-    protected function sendEmail($user)
+    protected function sendEmail(User $user): bool
     {
         return Yii::$app
             ->mailer

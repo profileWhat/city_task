@@ -2,7 +2,6 @@
 /** @var common\models\User $model */
 
 use common\widgets\Review;
-use yii\helpers\Html;
 
 $this->title = 'Reviews';
 $this->params['breadcrumbs'][] = $this->title;

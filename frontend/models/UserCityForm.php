@@ -10,12 +10,22 @@ class UserCityForm extends Model
 {
     private $city_info;
 
+    /**
+     * load geolocation info
+     *
+     * {@inheritdoc}
+     */
     public function __construct($config = [])
     {
         $this->city_info = Yii::$app->geolocation->getInfo('78.85.49.168');
         parent::__construct($config);
     }
 
+    /**
+     * Get user city by name
+     *
+     * @return mixed|null
+     */
     public function getUserCityName()
     {
         if (isset($this->city_info)) {
@@ -24,7 +34,13 @@ class UserCityForm extends Model
         return null;
     }
 
-    public function getUserCity() {
+    /**
+     * Get user city
+     *
+     * @return mixed|null
+     */
+    public function getUserCity()
+    {
         if (isset($this->city_info)) {
             return Yii::$app->cityAdapter->getCityByName($this->getUserCityName());
         }

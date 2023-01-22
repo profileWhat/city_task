@@ -2,7 +2,9 @@
 
 namespace common\models;
 
-use Yii;
+use yii\base\InvalidConfigException;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\helpers\Url;
 
 /**
@@ -14,12 +16,12 @@ use yii\helpers\Url;
  *
  * @property Review[] $reviews
  */
-class City extends \yii\db\ActiveRecord
+class City extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%city}}';
     }
@@ -27,7 +29,7 @@ class City extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['name'], 'required'],
@@ -39,7 +41,7 @@ class City extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -51,10 +53,10 @@ class City extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Reviews]].
      *
-     * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
+     * @return ActiveQuery
+     * @throws InvalidConfigException
      */
-    public function getReviews()
+    public function getReviews(): ActiveQuery
     {
         return $this->hasMany(Review::class, ['id' => 'review_id'])
             ->viaTable('{{%city_review}}', ['city_id' => 'id']);
@@ -65,12 +67,17 @@ class City extends \yii\db\ActiveRecord
      *
      * @return string
      */
-    public function getUrl()
+    public function getUrl(): string
     {
         return Url::to(['city/view', 'id' => $this->id]);
     }
 
-    public static function getCitiesUrl()
+    /**
+     * Gets cities URL
+     *
+     * @return string
+     */
+    public static function getCitiesUrl(): string
     {
         return Url::to(['city/index']);
     }

@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%city_review}}".
@@ -14,7 +16,7 @@ use Yii;
  * @property City $city
  * @property Review $review
  */
-class CityReview extends \yii\db\ActiveRecord
+class CityReview extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -27,7 +29,7 @@ class CityReview extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['city_id', 'review_id'], 'required'],
@@ -40,7 +42,7 @@ class CityReview extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -52,9 +54,9 @@ class CityReview extends \yii\db\ActiveRecord
     /**
      * Gets query for [[City]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCity()
+    public function getCity(): ActiveQuery
     {
         return $this->hasOne(City::class, ['id' => 'city_id']);
     }
@@ -62,9 +64,9 @@ class CityReview extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Review]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getReview()
+    public function getReview(): ActiveQuery
     {
         return $this->hasOne(Review::class, ['id' => 'review_id']);
     }

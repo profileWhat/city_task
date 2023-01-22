@@ -8,7 +8,11 @@ class Review extends Widget
 {
     public $review;
 
-    public function run() {
+    /**
+     * {@inheritdoc}
+     */
+    public function run()
+    {
         return $this->render('_review', ['review' => $this->review]);
     }
 }

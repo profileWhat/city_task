@@ -36,7 +36,7 @@ use yii\widgets\ActiveForm;
                     ]);
                     ?>
                 </h5>
-                <h5><?= Html::a("There is no your city", ['city/add-city'])?></h5>
+                <h5><?= Html::a("There is no your city", ['city/add-city']) ?></h5>
                 <h5><?= $form->field($model, 'rating')->textInput() ?></h5>
                 <h5><?= $form->field($model, 'img')->fileInput() ?></h5>
             </div>

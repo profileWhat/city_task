@@ -12,9 +12,9 @@ class CityAdapter extends Component
     /**
      * Gets city by name
      *
-     * @return \common\models\City
+     * @return City
      */
-    public function getCityByName($name)
+    public function getCityByName($name): ?City
     {
         $city = City::findOne(['name' => $name]);
         if (!isset($city)) {
@@ -30,11 +30,13 @@ class CityAdapter extends Component
     /**
      * Add city with unknown name
      *
-     * @return \common\models\City
+     * @return City
      * @throws CityNotFoundException
      */
-    public static function addCity($name)
+    public static function addCity($name): City
     {
+        $user_city = City::findOne(['name' => $name]);
+        if ($user_city != null) return $user_city;
         $city_info = Yii::$app->citySearch->getInfo($name);
         $city = new City();
         if ($city_info['status'] == 200) {

@@ -2,13 +2,13 @@
 
 namespace common\models;
 
-use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
 use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "{{%review}}".
@@ -24,12 +24,12 @@ use yii\web\UploadedFile;
  * @property User $author
  * @property City[] $cities
  */
-class Review extends \yii\db\ActiveRecord
+class Review extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%review}}';
     }
@@ -37,17 +37,17 @@ class Review extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'attributes' => [
                     BaseActiveRecord::EVENT_BEFORE_INSERT => ['create_time'],
                 ],
             ],
             [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'author_id',
                 'updatedByAttribute' => 'author_id',
             ],
@@ -57,7 +57,7 @@ class Review extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['title', 'text', 'rating'], 'required'],
@@ -72,7 +72,7 @@ class Review extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -88,9 +88,9 @@ class Review extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Author]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getAuthor()
+    public function getAuthor(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'author_id']);
     }
@@ -98,10 +98,10 @@ class Review extends \yii\db\ActiveRecord
     /**
      * Gets query for [[City]].
      *
-     * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
+     * @return ActiveQuery
+     * @throws InvalidConfigException
      */
-    public function getCities()
+    public function getCities(): ActiveQuery
     {
         return $this->hasMany(City::class, ['id' => 'city_id'])
             ->viaTable('{{%city_review}}', ['review_id' => 'id']);
@@ -112,7 +112,7 @@ class Review extends \yii\db\ActiveRecord
      *
      * @return string
      */
-    public function getAuthorLink()
+    public function getAuthorLink(): string
     {
         return Html::a($this->author->fio, $this->author->getUrl());
     }
@@ -122,7 +122,7 @@ class Review extends \yii\db\ActiveRecord
      *
      * @return array
      */
-    public function getCitiesLink()
+    public function getCitiesLink(): array
     {
         $links = [];
         if (count($this->cities) > 0) {
@@ -138,9 +138,10 @@ class Review extends \yii\db\ActiveRecord
     /**
      * Set cities to CityReview table
      *
+     * @param $cities
      * @return bool
      */
-    public function setCities($cities)
+    public function setCities($cities): bool
     {
         CityReview::deleteAll(['review_id' => $this->id]);
         foreach ($cities as $city) {

@@ -4,14 +4,12 @@ namespace frontend\controllers;
 
 use common\models\City;
 use common\models\CitySearch;
-use div\geoip\Geo;
 use frontend\models\AddCityForm;
-use frontend\models\UserCityForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * CityController implements the CRUD actions for City model.
@@ -48,9 +46,10 @@ class CityController extends Controller
     /**
      * Lists all City models.
      *
+     * @param null $isUserCity
      * @return string
      */
-    public function actionIndex($isUserCity = null)
+    public function actionIndex($isUserCity = null): string
     {
         $searchModel = new CitySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->get());
@@ -64,12 +63,15 @@ class CityController extends Controller
     /**
      * Displays a single City model.
      * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return string|Response
      */
-    public function actionView($id, $isUserCity = false)
+    public function actionView(int $id, $isUserCity = false)
     {
-        $model = $this->findModel($id);
+        try {
+            $model = $this->findModel($id);
+        } catch (NotFoundHttpException $e) {
+            return $this->redirect('index');
+        }
         if ($isUserCity) {
             Yii::$app->session->set('userCity', $model->name);
         }
@@ -78,7 +80,11 @@ class CityController extends Controller
         ]);
     }
 
-    public function actionAddCity()
+    /**
+     * Add city with City to DB
+     * @return string
+     */
+    public function actionAddCity(): string
     {
         $model = new AddCityForm();
 
@@ -102,7 +108,7 @@ class CityController extends Controller
      * @return City the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): City
     {
         if (($model = City::findOne(['id' => $id])) !== null) {
             return $model;

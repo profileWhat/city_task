@@ -14,7 +14,7 @@ class AddCityForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             ['cityName', 'required'],
@@ -35,7 +35,8 @@ class AddCityForm extends Model
     /**
      * Add city by city Name with CityAdapter
      */
-    public function addCity() {
+    public function addCity(): bool
+    {
         if ($this->validate()) {
             try {
                 CityAdapter::addCity($this->cityName);

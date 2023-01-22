@@ -2,8 +2,10 @@
 
 /** @var yii\web\View $this */
 /** @var yii\bootstrap5\ActiveForm $form */
-/** @var \frontend\models\VerifyEmailForm $model */
 
+/** @var VerifyEmailForm $model */
+
+use frontend\models\VerifyEmailForm;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 

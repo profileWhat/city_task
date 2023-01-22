@@ -97,7 +97,7 @@ $js = <<<JS
                         $('#review_' + review_id).hide();
                         $('#update-cancel_' + review_id).show();
                         $('#update_' + review_id).html(res);
-                        $('#review-create-form').on('beforeSubmit', function (e) {
+                        $('#review-create-form').on('beforeSubmit', function () {
                         updateReview($(this), review_id);
 	                    return false;
                     });
@@ -143,7 +143,7 @@ $js = <<<JS
     function updateReview(form, id) {
         //formData to upload _FILE[]
         let formData = new FormData(form[0]);
-        formData.forEach(function(item, i, arr){
+        formData.forEach(function(item, i){
             if(i === 'files'){
                 formdata.append(item.name, item)
             }
@@ -206,7 +206,7 @@ $js = <<<JS
     function createReview(form) {
         //formData to upload _FILE[]
         let formData = new FormData(form[0]);
-        formData.forEach(function(item, i, arr){
+        formData.forEach(function(item, i){
             if(i === 'files'){
                 formdata.append(item.name, item)
             }
@@ -233,7 +233,7 @@ $js = <<<JS
             type: 'POST',
             success: function(res){
                 $("#createReview").html(res);
-                $('#review-create-form').on('beforeSubmit', function (e) {
+                $('#review-create-form').on('beforeSubmit', function () {
                     createReview($(this));
 	                return false;
                 });

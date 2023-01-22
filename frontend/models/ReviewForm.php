@@ -3,12 +3,10 @@
 namespace frontend\models;
 
 use common\models\City;
-use common\models\CityReview;
 use common\models\Review;
-use Yii;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
-use yii\web\UploadedFile;
+
 
 class ReviewForm extends Model
 {
@@ -44,7 +42,7 @@ class ReviewForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'title' => 'Title',
@@ -60,7 +58,7 @@ class ReviewForm extends Model
      *
      * @return bool
      */
-    public function saveReview()
+    public function saveReview(): bool
     {
         $this->review->title = $this->title;
         $this->review->text = $this->text;
@@ -99,9 +97,10 @@ class ReviewForm extends Model
         return $this->review;
     }
 
-    public function uploadImg() {
+    public function uploadImg(): bool
+    {
         if ($this->img == null) return true;
-        if($this->validate()){
+        if ($this->validate()) {
             $this->img->saveAs("img/reviews/{$this->img->baseName}.{$this->img->extension}", false);
             return true;
         }
