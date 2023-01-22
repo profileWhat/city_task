@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\exceptions\ReviewNotFoundException;
 use common\models\Review;
 use frontend\models\ReviewForm;
 use Yii;
@@ -9,6 +10,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * ReviewController implements the CRUD actions for Review model.
@@ -61,7 +63,7 @@ class ReviewController extends Controller
      * Displays a single Review model.
      * @param int $id ID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws ReviewNotFoundException if the model cannot be found
      */
     public function actionView($id)
     {
@@ -80,20 +82,24 @@ class ReviewController extends Controller
     {
         $model = new ReviewForm();
         if ($this->request->isAjax) {
-            if ($this->request->isPost && $model->load($this->request->post()) && $model->saveReview()) {
-                return $this->renderAjax('@frontend/views/review/view.php', [
-                    'model' => $model->getReview(),
-                ]);
+            if ($this->request->isPost && $model->load($this->request->post())) {
+                $model->img = UploadedFile::getInstance($model, 'img');
+                if ($model->uploadImg() && $model->saveReview()) {
+                    return $this->renderAjax('@frontend/views/review/view.php', [
+                        'model' => $model->getReview(),
+                    ]);
+                }
             }
             return $this->renderAjax('@frontend/views/review/create.php', [
                 'model' => $model,
             ]);
         }
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->saveReview()) {
-                return $this->renderAjax('@frontend/views/review/view.php', [
-                    'model' => $model->getReview(),
-                ]);
+            if ($model->load($this->request->post())) {
+                $model->img = UploadedFile::getInstance($model, 'img');
+                if ($model->uploadImg() && $model->saveReview()) {
+                    return $this->redirect(['index']);
+                }
             }
         }
 
@@ -108,25 +114,31 @@ class ReviewController extends Controller
      * If request is Ajax, action will return updated review view
      * @param int $id ID
      * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws ReviewNotFoundException if the model cannot be found
      */
     public function actionUpdate($id)
     {
         $model = new ReviewForm();
         $model->loadDefaultValues($this->findModel($id));
         if ($this->request->isAjax) {
-            if ($this->request->isPost && $model->load($this->request->post()) && $model->saveReview()) {
-                return $this->renderAjax('@frontend/views/review/view.php', [
-                    'model' => $this->findModel($id),
-                ]);
+            if ($this->request->isPost && $model->load($this->request->post())) {
+                $model->img = UploadedFile::getInstance($model, 'img');
+                if ($model->uploadImg() && $model->saveReview()) {
+                    return $this->renderAjax('@frontend/views/review/view.php', [
+                        'model' => $this->findModel($id),
+                    ]);
+                }
             }
             return $this->renderAjax('@frontend/views/review/update.php', [
                 'model' => $model,
             ]);
         }
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->saveReview()) {
-            return $this->redirect(['index']);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->img = UploadedFile::getInstance($model, 'img');
+            if ($model->uploadImg() && $model->saveReview()) {
+                return $this->redirect(['index']);
+            }
         }
 
         return $this->render('update', [
@@ -139,7 +151,7 @@ class ReviewController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return false|int|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws ReviewNotFoundException if the model cannot be found
      */
     public function actionDelete($id)
     {
@@ -153,7 +165,7 @@ class ReviewController extends Controller
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
      * @return Review the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws ReviewNotFoundException if the model cannot be found
      */
     protected function findModel($id)
     {
@@ -161,6 +173,6 @@ class ReviewController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new ReviewNotFoundException("Review not found.", "Review with that id is not found");
     }
 }

@@ -133,6 +133,7 @@ $js = <<<JS
     setCancelButtons();
     setUpdateButtons();
     setDeleteButtons();
+    
     function stopUpdate() {
         $('update-cancel-button').each(function (index, element) {
            element.click(); 
@@ -140,10 +141,19 @@ $js = <<<JS
     }
 
     function updateReview(form, id) {
+        //formData to upload _FILE[]
+        let formData = new FormData(form[0]);
+        formData.forEach(function(item, i, arr){
+            if(i === 'files'){
+                formdata.append(item.name, item)
+            }
+        });
         $.ajax({
             url: '/review/update?id=' + id,
             type: 'POST',
-            data: form.serialize(),
+             contentType: false,
+            processData: false,
+            data: formData,
             success: function(res){
                 console.log(res);
                 let review = document.getElementById('review_' + id);
@@ -172,6 +182,10 @@ $js = <<<JS
                 
         let reviews = document.getElementById('reviews');
         reviews.insertAdjacentHTML('afterbegin', 
+                "<div id='review-view_" + review_id + "'>" +
+                "<div id='review_" + review_id + "'>" +
+                reviewHtml + 
+                "</div>" +
                 "<update-button class='btn btn-success' id='update-start_" + review_id  + "' data-id='" + review_id + "'>" +
                     "Update" +
                 "</update-button>" +
@@ -182,21 +196,27 @@ $js = <<<JS
                 "</update-form>" +
                 "<update-cancel-button class='btn btn-danger' style='display: none' id='update-cancel_" + review_id + "' data-id='" + review_id +"'>" +
                     "Cancel updating" +
-                "</update-cancel-button>");
+                "</update-cancel-button>" +
+                "</div>");
         setCancelButtons();
         setUpdateButtons();
         setDeleteButtons();
-        reviews.insertAdjacentHTML('afterbegin', 
-                "<div id='review_" + review_id + "'>" +
-                reviewHtml + 
-                "</div>");
     }
     
     function createReview(form) {
+        //formData to upload _FILE[]
+        let formData = new FormData(form[0]);
+        formData.forEach(function(item, i, arr){
+            if(i === 'files'){
+                formdata.append(item.name, item)
+            }
+        });
         $.ajax({
             url: '/review/create',
             type: 'POST',
-            data: form.serialize(),
+            contentType: false,
+            processData: false,
+            data: formData,
             success: function(res){
                 insert(res);
                 stopCreate();

@@ -1,4 +1,7 @@
 <?php
+
+use yii\helpers\Html;
+
 $review = $this->context->review;
 ?>
 <div class="card my-4">
@@ -13,8 +16,14 @@ $review = $this->context->review;
                 <?php endforeach; ?>
             </h5>
             <h5>Rating: <?= $review->rating ?></h5>
+            <?php if ($review->img != null): ?>
+                <h5>Img: </h5>
+                <?= Html::img('@web/img/reviews/' . $review->img, ['alt' => 'some', 'class' => 'thing', 'width' => '300', 'height' => '300']); ?>
+            <?php endif; ?>
         </div>
         <div class="card-text">
+            Content:
+            <br>
             <?= $review->text ?>
             <hr class="hr hr-blurry"/>
             Created at: <?= date('F j, Y \a\t h:i a', $review->create_time); ?>

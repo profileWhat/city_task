@@ -8,6 +8,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\BaseActiveRecord;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "{{%review}}".
@@ -16,7 +17,7 @@ use yii\helpers\Url;
  * @property string $title
  * @property string $text
  * @property int $rating
- * @property resource|null $img
+ * @property string|null $img
  * @property int|null $create_time
  * @property int|null $author_id
  *
@@ -53,7 +54,6 @@ class Review extends \yii\db\ActiveRecord
         ];
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -61,7 +61,7 @@ class Review extends \yii\db\ActiveRecord
     {
         return [
             [['title', 'text', 'rating'], 'required'],
-            [['img'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
+            ['img', 'file', 'extensions' => 'png, jpg'],
             ['text', 'string', 'max' => 255],
             [['rating', 'author_id'], 'integer'],
             [['rating'], 'integer', 'min' => 1, 'max' => 5],
@@ -126,7 +126,7 @@ class Review extends \yii\db\ActiveRecord
     {
         $links = [];
         if (count($this->cities) > 0) {
-            foreach($this->cities as $city) {
+            foreach ($this->cities as $city) {
                 $links[] = Html::a($city->name, $city->getUrl());
             }
             return $links;

@@ -14,9 +14,11 @@ use yii\widgets\ActiveForm;
 <div class="review-form">
 
     <?php $form = ActiveForm::begin([
-        'options' => ['id' => 'review-create-form']
+        'options' => [
+            'id' => 'review-create-form',
+            'enctype' => 'multipart/form-data'
+        ]
     ]); ?>
-
 
 
     <div class="card my-4">
@@ -25,7 +27,7 @@ use yii\widgets\ActiveForm;
                 <h4><?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?></h4>
                 <h5>
                     <?= $form->field($model, 'citiesId')->widget(Select2::classname(), [
-                        'data' => ArrayHelper::map(City::find()->all(), 'id','name'),
+                        'data' => ArrayHelper::map(City::find()->all(), 'id', 'name'),
                         'options' => ['placeholder' => 'Select a city ...'],
                         'pluginOptions' => [
                             'allowClear' => true,

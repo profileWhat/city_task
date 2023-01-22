@@ -8,6 +8,7 @@ use common\models\Review;
 use Yii;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 
 class ReviewForm extends Model
 {
@@ -32,7 +33,7 @@ class ReviewForm extends Model
     {
         return [
             [['title', 'text', 'rating'], 'required'],
-            [['img'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
+            ['img', 'file', 'extensions' => 'png, jpg'],
             ['text', 'string', 'max' => 255],
             ['title', 'string', 'max' => 100],
             [['rating'], 'integer', 'min' => 1, 'max' => 5],
@@ -86,6 +87,7 @@ class ReviewForm extends Model
         $this->title = $review->title;
         $this->text = $review->text;
         $this->rating = $review->rating;
+        $this->img = $review->img;
         $this->citiesId = ArrayHelper::map($review->cities, 'id', 'id');
     }
 
@@ -95,5 +97,14 @@ class ReviewForm extends Model
     public function getReview(): Review
     {
         return $this->review;
+    }
+
+    public function uploadImg() {
+        if ($this->img == null) return true;
+        if($this->validate()){
+            $this->img->saveAs("img/reviews/{$this->img->baseName}.{$this->img->extension}", false);
+            return true;
+        }
+        return false;
     }
 }

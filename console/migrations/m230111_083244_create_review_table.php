@@ -23,7 +23,7 @@ class m230111_083244_create_review_table extends Migration
             'title' => $this->string(128)->notNull(),
             'text' => $this->text()->notNull(),
             'rating' => $this->tinyInteger(5)->notNull(),
-            'img' => $this->binary(),
+            'img' => $this->string(256),
             'create_time' => $this->integer(),
             'author_id' => $this->integer()->notNull()
         ], $tableOptions);
