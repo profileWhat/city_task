@@ -23,7 +23,10 @@ return [
         'session' => [
             // this is the name of the session cookie used for login on the frontend
             'name' => 'advanced-frontend',
-            'timeout' => 10
+            'class' => 'yii\web\Session',
+            'cookieParams' => ['httponly' => true, 'lifetime' => 3600 * 2],
+            'timeout' => 3600 * 2,
+            'useCookies' => true,
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

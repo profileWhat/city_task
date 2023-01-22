@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\models\City;
 use common\models\CitySearch;
 use div\geoip\Geo;
+use frontend\models\AddCityForm;
 use frontend\models\UserCityForm;
 use Yii;
 use yii\web\Controller;
@@ -56,10 +57,31 @@ class CityController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($id, $isUserCity = false)
     {
+        $model = $this->findModel($id);
+        if ($isUserCity) {
+            Yii::$app->session->set('userCity', $model->name);
+        }
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model
+        ]);
+    }
+
+    public function actionAddCity()
+    {
+        $model = new AddCityForm();
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->addCity()) {
+                Yii::$app->session->setFlash("success", "Your city added");
+            } else {
+                Yii::$app->session->setFlash("danger", "this city does not exist");
+            }
+        }
+
+        return $this->render('addCity', [
+            'model' => $model
         ]);
     }
 
